@@ -13,10 +13,22 @@ import numpy as np
 model_path = "model_vit.pth"
 class_names = ["cataract", "diabetic", "glaucoma", "normal"]
 
+# Link GDrive (ganti ID sesuai file kamu)
+file_id = "1c4ezMRnxYUKPpzYCNbZAjmxWLPbsT90z"
+download_url = f"https://drive.google.com/uc?id={file_id}"
+
+# Unduh model jika belum ada
+if not os.path.exists(model_path):
+    with st.spinner("📥 Mengunduh model dari Google Drive..."):
+        gdown.download(download_url, model_path, quiet=False)
+        st.success("✅ Model berhasil diunduh!")
+
+# Load dan siapkan model
 model = vit_b_16()
 model.heads = nn.Linear(model.heads.head.in_features, len(class_names))
 model.load_state_dict(torch.load(model_path, map_location=torch.device("cpu")))
 model.eval()
+
 
 transform = transforms.Compose([
     transforms.Resize((224, 224)),
